@@ -30,6 +30,11 @@ pip install python-dateutil
 
 ## Uso
 
+## Escopo das verificações
+
+As tarefas verificadas pelo script são exclusivamente as tarefas do BotCity. A função `task_is_running()` presente em `Entities/task_states.py` deve implementar a lógica de checagem baseada nas execuções gerenciadas pelo BotCity. Se você usar outro orquestrador ou método de verificação, adapte essa função conforme necessário.
+
+
 Executar o script manualmente:
 
 ```bash

@@ -1,0 +1,81 @@
+# Reiniciar PC quando não houver tarefa em execução
+
+Script simples em Python que reinicia o computador se nenhuma tarefa estiver em execução por um período contínuo configurável.
+
+## Visão geral
+
+O script monitora a função `task_is_running()` (em `Entities/task_states.py`) a cada minuto. Se não for detectada nenhuma tarefa em execução por N minutos consecutivos (padrão: 10), o script executa o comando de reinício do Windows:
+
+```
+shutdown /r /t 0
+```
+
+Use com cautela — o comando reinicia imediatamente sem salvar trabalho aberto.
+
+## Pré-requisitos
+
+- Python 3.8+ (testado com Python 3.x)
+- Dependência: python-dateutil
+
+Instalar dependências:
+
+```bash
+pip install python-dateutil
+```
+
+## Arquivos relevantes
+
+- `main.py` — script principal
+- `Entities/task_states.py` — contém `task_is_running()` que deve retornar True quando houver tarefa ativa
+
+## Uso
+
+Executar o script manualmente:
+
+```bash
+python main.py
+```
+
+O tempo limite (minutos) pode ser alterado passando um argumento para `Main.exec()`. Exemplo para 30 minutos:
+
+```python
+from main import Main
+Main.exec(minutes=30)
+```
+
+## Comportamento
+
+- O script reinicia a contagem quando `task_is_running()` retorna True.
+- Se não houver tarefa em execução por mais do que o valor de `minutes`, o script chama o comando de reinício e encerra.
+- Após 3 horas de monitoramento sem atingir o tempo configurado, o script encerra automaticamente (proteção contra loops longos).
+
+## Avisos de segurança
+
+- O comando de reinício encerra a sessão do usuário imediatamente. Salve todos os trabalhos antes de executar.
+- Tenha cuidado ao configurar execução automática — teste manualmente antes de agendar reinícios automáticos.
+
+## Agendamento (opcional) — Agendador de Tarefas do Windows
+
+1. Abra o Agendador de Tarefas do Windows.
+2. Crie uma nova tarefa básica e aponte para o interpretador Python com o caminho do `main.py` como argumento, ou chame um script .bat que ative o venv e execute `python main.py`.
+3. Configure para executar no logon ou em um agendamento recorrente, conforme desejado.
+
+Exemplo de comando no campo "Programa/script":
+
+```
+C:\Path\to\python.exe r:\#Rotinas\04 - reiniciar_pc_sem_task_ativa - Renan\main.py
+```
+
+Nota: ajustar os caminhos conforme seu ambiente. Teste executando manualmente antes.
+
+## Contribuição
+
+Reportar problemas, enviar melhorias na função `task_is_running()` ou adicionar opções de configuração via argparse são bem-vindos.
+
+## Licença
+
+Este repositório está licenciado sob a licença MIT — veja o arquivo `LICENSE`.
+
+## Contato
+
+Autor: Renan (pasta do projeto do usuário)

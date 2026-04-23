@@ -23,6 +23,24 @@ Instalar dependências:
 pip install python-dateutil
 ```
 
+Instalação rápida (venv / requirements)
+
+Recomenda-se criar um ambiente virtual e instalar as dependências a partir do `requirements.txt` gerado para este projeto:
+
+Windows (PowerShell):
+
+```powershell
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+Windows (CMD):
+
+```cmd
+venv\Scripts\activate.bat
+pip install -r requirements.txt
+```
+
 ## Arquivos relevantes
 
 - `main.py` — script principal
@@ -77,10 +95,17 @@ Nota: ajustar os caminhos conforme seu ambiente. Teste executando manualmente an
 
 Reportar problemas, enviar melhorias na função `task_is_running()` ou adicionar opções de configuração via argparse são bem-vindos.
 
+## Últimas mudanças
+
+- Adicionado `README.md` e `LICENSE` (MIT).
+- Adicionada nota indicando que as tarefas verificadas são exclusivamente do BotCity.
+- Adicionado `requirements.txt` com dependências do ambiente (ex.: `python-dateutil`).
+
 ## Licença
 
 Este repositório está licenciado sob a licença MIT — veja o arquivo `LICENSE`.
 
 ## Contato
 
-Autor: Renan (pasta do projeto do usuário)
+Renan Brian Hermenegildo Oliveira <renan.oliveira@patrimar.com.br>
+

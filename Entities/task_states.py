@@ -1,30 +1,57 @@
+import logging
 import os
-import dotenv; dotenv.load_dotenv()
+
+import dotenv
 from maestro_client import MaestroClient
 
-def task_is_running(*, size=20, _print=False):
-    client = MaestroClient(
-        login=os.getenv("BOTCITY_LOGIN", ""),
-        key=os.getenv("BOTCITY_KEY", ""),
-        base_url="https://developers.botcity.dev"
-    )
+dotenv.load_dotenv()
 
-    client.authenticate()
+logger = logging.getLogger(__name__)
 
-    x = client.tasks.list(size=size).data['content']
-    print(len(x)) if _print else None
-    task_running = 0
-    for i in x:
-        if i['state'] == 'RUNNING':
-            task_running += 1
-        #print(i['activityName'], " - ", i['state'])
-    #display(x)
-    if task_running > 0:
-        print(f"Existem {task_running} tarefas em execução.") if _print else None
+
+def task_is_running(*, size: int = 20) -> bool:
+    """Verifica se há tarefas em execução no BotCity Maestro.
+
+    Raises:
+        RuntimeError: se a autenticação ou a listagem de tarefas falhar.
+    """
+    login = os.getenv("BOTCITY_LOGIN", "")
+    key = os.getenv("BOTCITY_KEY", "")
+
+    if not login or not key:
+        raise RuntimeError(
+            "Credenciais BOTCITY_LOGIN e/ou BOTCITY_KEY não configuradas no .env"
+        )
+
+    try:
+        client = MaestroClient(
+            login=login,
+            key=key,
+            base_url="https://developers.botcity.dev",
+        )
+        client.authenticate()
+        response = client.tasks.list(size=size)
+    except Exception as exc:
+        raise RuntimeError(f"Falha ao consultar tarefas no BotCity: {exc}") from exc
+
+    content = (response.data or {}).get("content")
+    if content is None:
+        raise RuntimeError(
+            "Resposta inesperada da API do BotCity: campo 'content' ausente."
+        )
+
+    running = [task for task in content if task.get("state") == "RUNNING"]
+    count = len(running)
+
+    if count > 0:
+        logger.info("Existem %d tarefa(s) em execução.", count)
         return True
-    else:
-        print("Não existem tarefas em execução.") if _print else None
-        return False
-    
+
+    logger.info("Nenhuma tarefa em execução.")
+    return False
+
+
 if __name__ == "__main__":
-    print(f"{task_is_running(size=200, _print=True)=}")
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    result = task_is_running(size=200)
+    print(f"{result=}")

@@ -5,6 +5,7 @@
 *.ipynb
 *config.init
 *Logs
+logs/
 *.json
 *Download_Arquivos
 *Bases
